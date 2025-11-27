@@ -78,36 +78,15 @@ Both metrics have extremely low correlation magnitudes, and as a result, all thr
 # heatmap(cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"))
 # corrplot(cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"), method = "color")
 
-ggcorrplot(
-  cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
-  hc.order = TRUE,
-  type = "lower",
-  # lab = TRUE,
-  # lab_size = 2,
-  colors = c("#6D9EC1", "white", "#E46726")
-)
-
 pheatmap(
   cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
-  color = colorRampPalette(c("navy", "white", "firebrick3"))(200),
+  color = colorRampPalette(c("#132B43", "#56B1F7", "#99FFFF"))(200),
   border_color = NA,
   cluster_rows = FALSE,
   cluster_cols = FALSE,
   fontsize = 10,
   fontsize_col = 10,
   fontsize_row = 10
-)
-
-corrplot(
-  cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
-  method = "color",
-  col = colorRampPalette(c("#313695", "#4575B4", "#74ADD1", 
-                           "#E0F3F8", "#FFFFBF", "#FEE090", 
-                           "#F46D43", "#D73027", "#A50026"))(200),
-  tl.cex = 0.8,
-  number.cex = 0.7,
-  cl.cex = 0.7,
-  addgrid.col = NA
 )
 ```
 
