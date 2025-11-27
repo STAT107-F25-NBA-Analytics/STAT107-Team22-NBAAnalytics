@@ -16,7 +16,7 @@ plot_corr <- function(df, x, y) {
   fname <- paste0("../img/plots/", x, "_vs_", y, ".png")
   
   # Saving the plot
-  ggsave(fname, p, width = 6, height = 4, dpi = 300)
+  ggsave(fname, p, width = 6, height = 4, dpi = 600)
   
   # Calculate
   c <- cor(df[[x]], df[[y]], use = "complete.obs")
