@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("00_requirements.R")
-source("01_function.R")
+source("01_plot_functions.R")
 load("../data/21_NBA-Analysis.RData")
 ```
 
@@ -75,19 +75,26 @@ plot_corr(nba_processed, "Steals", "Personal Fouls")
 Both metrics have extremely low correlation magnitudes, and as a result, all three of these variables will be included in the full defensive model prior to pruning.
 
 ``` {r}
-# heatmap(cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"))
-# corrplot(cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"), method = "color")
+# Putting heatmap construction in local so as not 
+local({
+  heatmap_corr <- pheatmap(
+    cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
+    color = colorRampPalette(c("#132B43", "#56B1F7", "#99FFFF"))(200),
+    border_color = NA,
+    cluster_rows = FALSE,
+    cluster_cols = FALSE,
+    fontsize = 10,
+    fontsize_col = 10,
+    fontsize_row = 10
+  )
+  
+  ggsave("../img/plots/corr_heatmap.png", heatmap_corr, width = 8, height = 8, dpi = 600)
+})
+```
 
-pheatmap(
-  cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
-  color = colorRampPalette(c("#132B43", "#56B1F7", "#99FFFF"))(200),
-  border_color = NA,
-  cluster_rows = FALSE,
-  cluster_cols = FALSE,
-  fontsize = 10,
-  fontsize_col = 10,
-  fontsize_row = 10
-)
+```{r}
+# Checking for colinearity between Three Pointers Attempted and Two Pointer Attempts
+plot_corr(nba_processed, "Three Pointers Attempted", "Two Pointer Attempts")
 ```
 
 ```{r, echo=FALSE}
