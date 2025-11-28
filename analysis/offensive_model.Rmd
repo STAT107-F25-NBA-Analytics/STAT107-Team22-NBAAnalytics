@@ -1,0 +1,50 @@
+---
+title: "offensive_model"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+df <- read.csv("../data/nba_clean.csv")
+
+#Estimated Points scored
+df$Points <- (df$Field.Goals.Made - df$Three.Pointers.Made) * 2 + 
+             df$Three.Pointers.Made * 3 + 
+             df$Free.Throws.Made
+#Estimated number of offensive possessions
+df$Possessions <- df$Field.Goals.Attempted + 
+                  0.44 * df$Free.Throws.Attempted - 
+                  df$Offensive.Rebounds + 
+                  df$Turnover
+# Estimated offensive efficiency
+df$OffensiveEfficiency <- df$Points / df$Possessions
+
+head(df[, c("Team.Name","Points", "Possessions", "OffensiveEfficiency")])
+
+```
+```{r}
+library(dplyr)
+
+#Forming offensive model
+full_offensive_model <- lm(
+  OffensiveEfficiency ~ Field.Goal.Accuracy +
+           Three.Pointer.Accuracy +
+           Free.Throw.Accuracy +
+           Offensive.Rebounds +
+           Assists +
+           Turnover +
+           Three.Pointers.Attempted +
+           Free.Throws.Attempted,
+  data = df
+)
+
+#Summary of the model
+summary(full_offensive_model)
+```
+
+```{r}
+#Running backwards elimination on the model
+step(full_offensive_model, direction = "backward")
+```
+
