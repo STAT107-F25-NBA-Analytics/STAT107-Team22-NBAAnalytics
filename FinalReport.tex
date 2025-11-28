@@ -342,6 +342,8 @@ rationale:
   Personal Fouls: Penalty for illegal defensive maneuver
 \end{itemize}
 
+\newpage
+
 \subsection{EDA \& Data Visualization}\label{eda-data-visualization}
 
 When computing models using the dataset, we must first analyze any
@@ -355,7 +357,9 @@ typical threshold of
 
 \pandocbounded{\includegraphics[keepaspectratio]{img/plots/corr_heatmap.png}}
 
+\begin{center}
 \textbf{Figure 1.1: Correlation Matrix}
+\end{center}
 
 When viewing the correlation heatmap (Figure 1.1) for the dataset, we
 must keep in mind the symmetry about the principal diagonal due to the
@@ -381,7 +385,7 @@ two-point attempts, so we check these two metrics for colinearity.
 qualify as sufficiently colinear, both will be accounted for when
 constructing the offensive play model prior to F-testing.
 
-Similarly, ince three pointers and two-point shots are necessarily made
+Similarly, since three pointers and two-point shots are necessarily made
 during offensive drives, there is concern about colinearity between the
 successful attempts since they occupy the same production space. As a
 result, we will test for colinearity between the two.
@@ -395,8 +399,8 @@ threshold test for colinearity. As a result, both variables can
 contribute to an initial model before backward elimination.
 
 Due to the current NBA rules, personal fouls very frequently enable
-opponents to shoot free throws. Due to the confoundingness in the
-production of such metrics, colinearity must be tested.
+opponents to shoot free throws. Consequently, colinearity must be
+tested.
 
 \pandocbounded{\includegraphics[keepaspectratio]{img/plots/Free_Throws_Attempted_vs_Personal_Fouls_Drawn.png}}
 

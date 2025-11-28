@@ -130,6 +130,7 @@ As a final preliminary to EDA and data visualization, we will also categorize th
 - Blocks: Disrupts a point-gaining opportunity for opponent
 - Personal Fouls: Penalty for illegal defensive maneuver
 
+\newpage
 ## EDA & Data Visualization
 
 When computing models using the dataset, we must first analyze any potential colinearities between variables to identify potential redundancies in model construction prior to regression and pruning. To do so, we may produce a correlation matrix and run colinearity tests on variables of concern. When checking for colinearity, we will use the typical threshold of 
@@ -137,8 +138,9 @@ When computing models using the dataset, we must first analyze any potential col
 $$ |\rho| > 0.7$$
 
 ![](img/plots/corr_heatmap.png)
-
-**Figure 1.1: Correlation Matrix**
+\begin{center}
+\textbf{Figure 1.1: Correlation Matrix}
+\end{center}
 
 When viewing the correlation heatmap (Figure 1.1) for the dataset, we must keep in mind the symmetry about the principal diagonal due to the mirroredness of the graph's structure. Furthermore, cells along the diagonal will trivially show and high colinearity due to this structure and how certain variables are calculated. With this in mind, only intensely-colored cells and clusters for intracategorical variables (i.e. three point and two point shots since both are offensive metrics) will be taken for concern. For simple verification, we may also want to test for colinearity for simple verification where there is a concern in an overlap of the space — practically and mathematically — certain variables are produced in (i.e. three point and two point shots since both are attempted during a drive as binary shot choices).
 
@@ -150,7 +152,7 @@ $$\rho = -0.64$$
 
 $\rho = -0.64$ does not meet the required magnitude threshold to qualify as sufficiently colinear, both will be accounted for when constructing the offensive play model prior to F-testing.
 
-Similarly, ince three pointers and two-point shots are necessarily made during offensive drives, there is concern about colinearity between the successful attempts since they occupy the same production space. As a result, we will test for colinearity between the two.
+Similarly, since three pointers and two-point shots are necessarily made during offensive drives, there is concern about colinearity between the successful attempts since they occupy the same production space. As a result, we will test for colinearity between the two.
 
 ![](img/plots/Three_Pointers_Made_vs_Two_Pointers_Made.png)
 
@@ -158,7 +160,7 @@ $$\rho = -0.368$$
 
 The plot indicates a very weak linear relation, and $\rho$ fails the threshold test for colinearity. As a result, both variables can contribute to an initial model before backward elimination.
 
-Due to the current NBA rules, personal fouls very frequently enable opponents to shoot free throws. Due to the confoundingness in the production of such metrics, colinearity must be tested.
+Due to the current NBA rules, personal fouls very frequently enable opponents to shoot free throws. Consequently, colinearity must be tested.
 
 ![](img/plots/Free_Throws_Attempted_vs_Personal_Fouls_Drawn.png)
 
