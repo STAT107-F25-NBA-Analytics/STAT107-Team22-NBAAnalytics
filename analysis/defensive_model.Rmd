@@ -1,0 +1,59 @@
+---
+title: "defensive_model"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+df <- read.csv("../data/nba_clean.csv")
+
+
+#Computing team's own points
+df <- df %>%
+  mutate(
+    Points = (Field.Goals.Made - Three.Pointers.Made) * 2 +
+             Three.Pointers.Made * 3 +
+             Free.Throws.Made,
+    
+    Possessions = Field.Goals.Attempted +
+                  0.44 * Free.Throws.Attempted -
+                  Offensive.Rebounds +
+                  Turnover
+  )
+
+#Creating clean opponent table
+df_opp <- df %>%
+  rename_with(~ paste0("Opp_", .), -Game.ID)
+
+#Matching opponent's points by game ID
+df_joined <- df %>%
+  inner_join(df_opp, by = "Game.ID")%>%
+  filter(Team.ID != Opp_Team.ID)
+
+#Computing opponent's points
+df_joined <- df_joined %>%
+  mutate(
+    OppPoints = (Opp_Field.Goals.Made - Opp_Three.Pointers.Made) * 2 +
+            Opp_Three.Pointers.Made * 3 +
+            Opp_Free.Throws.Made,
+
+    OppPossessions = Opp_Field.Goals.Attempted +
+                 0.44 * Opp_Free.Throws.Attempted -
+                 Opp_Offensive.Rebounds +
+                 Opp_Turnover,
+
+    DefensiveEfficiency = OppPoints / OppPossessions
+  )
+
+df_joined %>%
+  select(Game.ID,
+         Team.Abbreviation, Opp_Team.Abbreviation,
+         Points, OppPoints,
+         Possessions, OppPossessions,
+         DefensiveEfficiency) %>%
+  head(5)
+
+```
+
