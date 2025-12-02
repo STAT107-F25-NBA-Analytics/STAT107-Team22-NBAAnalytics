@@ -1,17 +1,22 @@
 ## Notes
 ### LOC Changed = Additions + Deletions
 ### LOC Net = Additions - Deletions
+### Exact LOC values may be slightly off 
 
 ## Sangeet Barkataki
-### LOC Added: (91,273)
-### LOC Changed: 92.1K (92,123)
-### LOC Net: 90.6K (90,583)
-### Total Commits: 40
-### Merged Commits: 30
+### LOC Added: 91.3K (91,280)
+### LOC Changed: 92.1K (92,130)
+### LOC Net: 90.6K (90,590)
+### Total Commits: 44
+### Merged Commits: 32
 ### Issues Created: 7
 ### Issues Worked On: 1
 ### PRs: 1
 ### Approved/Merged PRs: 1
+### Code Reviews: 1
+### Code Review Feedback Comments: 16
+### Governance Interventions: 1
+- Reverted bad PR merge
 
 ## Chris Zhao
 ### LOC Added: 343
