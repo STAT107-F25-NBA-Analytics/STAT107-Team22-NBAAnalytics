@@ -1,23 +1,30 @@
-# Contributors
+## Notes
+### LOC Changed = Additions + Deletions
+### LOC Net = Additions - Deletions
 
 ## Sangeet Barkataki
-### LOC Contributed: 92.1K (92,132)
-### Total Commits: 38
-### Merged Commits: 29
+### LOC Added: (91,273)
+### LOC Changed: 92.1K (92,123)
+### LOC Net: 90.6K (90,583)
+### Total Commits: 40
+### Merged Commits: 30
 ### Issues Created: 7
 ### Issues Worked On: 1
 ### PRs: 1
-### Approved PRs: 1
+### Approved/Merged PRs: 1
 
 ## Chris Zhao
-### LOC Contributed: 343
+### LOC Added: 343
+### LOC Changed: 343
+### LOC Net: 343
 ### Total Commits: 2
 ### Code Reviews: 1
 ### PRs: 1
 
 ## Arsenii Vasilev
-### LOC Contributed: 113
+### LOC Added: 113
+### LOC Changed: 113
+### LOC Net: 113
 ### Total Commits: 2
 ### Issues Worked On: 6
 ### PRs: 1
-
