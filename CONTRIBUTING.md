@@ -25,19 +25,20 @@
 - Refactored EDA (taking feedback from Halfway Evaluation)
 - Refactored methodologies (Halfway Eval feedback)
   
-### LOC Added: 91.3K (91,316)
-### LOC Changed: 92.1K (92,166)
-### LOC Net: 90.6K (90,626)
-### Total Commits: 45
-### Merged Commits: 33
+### LOC Added: 91.3K (91,318)
+### LOC Changed: 92.1K (92,168)
+### LOC Net: 90.6K (90,628)
+### Total Commits: 46
+### Merged Commits: 34
 ### Issues Created: 7
 ### Issues Worked On: 1
 ### PRs: 1
 ### Approved/Merged PRs: 1
 ### Code Reviews: 1
 ### Code Review Feedback Comments: 16
-### Governance Interventions: 1
-- Reverted bad PR merge
+### Governance Interventions: 2
+1. Reverted bad PR merge
+2. Overrode PR ettiquette & repository's PR approval settings due to reviewee merge conflict resolvement complication (emergency)
 
 ## Chris Zhao
 
