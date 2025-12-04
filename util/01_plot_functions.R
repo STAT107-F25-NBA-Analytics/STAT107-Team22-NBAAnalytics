@@ -32,3 +32,26 @@ plot_corr <- function(df, x, y) {
   
   return(c)
 }
+
+timeseriesgraph <- function(y) {
+  
+  y_sym <- sym(y)
+  
+  ggplot(nba_processed %>%
+           group_by(`Season`) %>%
+           summarize(mean_seasonal = mean(!!y_sym)),
+         aes(`Season`, mean_seasonal, group = 1)) +
+    geom_line(linewidth = 1.4, color = "#1F78B4") +
+    geom_point(size = 3, color = "#1F78B4") +
+    labs(
+      title = paste( y, "by Season"),
+      x = "Season",
+      y = y
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      plot.title = element_text(face = "bold", size = 18)
+    )
+}
+
