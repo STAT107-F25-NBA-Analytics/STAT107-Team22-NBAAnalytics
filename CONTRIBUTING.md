@@ -4,11 +4,24 @@
 ### Exact LOC values may be slightly off 
 
 ## Sangeet Barkataki
-### LOC Added: 91.3K (91,280)
-### LOC Changed: 92.1K (92,130)
-### LOC Net: 90.6K (90,590)
-### Total Commits: 44
-### Merged Commits: 32
+### Primary Contributions
+- Final Report
+  - Abstract & Methodologies
+  - EDA Section
+  - Next Steps
+  - Citations
+- Data Sourcing
+- Data Cleaning
+- Data Processing
+- Data Analysis
+ - Plotting Functions
+ - Produced All Scatterplots in EDA Section
+ - Produced Correlation Matrix 
+### LOC Added: 91.3K (91,293)
+### LOC Changed: 92.1K (92,143)
+### LOC Net: 90.6K (90,603)
+### Total Commits: 45
+### Merged Commits: 33
 ### Issues Created: 7
 ### Issues Worked On: 1
 ### PRs: 1
