@@ -4,36 +4,48 @@ output: html_document
 ---
 
 ```{r}
-library(tidyverse)
+source("../util/00_requirements.R")
 
-df <- read.csv("../data/nba_clean.csv")
+df <- read.csv("../data/nba_processed.csv")
+
 
 #Estimated Points scored
-df$Points <- (df$Field.Goals.Made - df$Three.Pointers.Made) * 2 + 
-             df$Three.Pointers.Made * 3 + 
-             df$Free.Throws.Made
+df <- df %>%
+  mutate(
+    Points = Two.Pointers.Made * 2 +
+             Three.Pointers.Made * 3 +
+             Free.Throws.Made
+  )
 #Estimated number of offensive possessions
-df$Possessions <- df$Field.Goals.Attempted + 
-                  0.44 * df$Free.Throws.Attempted - 
-                  df$Offensive.Rebounds + 
-                  df$Turnover
+df <- df %>%
+  mutate(
+    FG_Attempts_Total = Two.Pointer.Attempts + Three.Pointers.Attempted,
+    Possessions = FG_Attempts_Total +
+                  0.44 * Free.Throws.Attempted -
+                  Offensive.Rebounds +
+                  Turnover
+  )
 # Estimated offensive efficiency
-df$OffensiveEfficiency <- df$Points / df$Possessions
+df <- df %>%
+  mutate(
+    OffensiveEfficiency = Points / Possessions
+  )
 
 head(df[, c("Team.Name","Points", "Possessions", "OffensiveEfficiency")])
 
 ```
 ```{r}
-library(dplyr)
+
 
 #Forming offensive model
 full_offensive_model <- lm(
-  OffensiveEfficiency ~ Field.Goal.Accuracy +
+  OffensiveEfficiency ~ Two.Pointer.Accuracy +
            Three.Pointer.Accuracy +
            Free.Throw.Accuracy +
            Offensive.Rebounds +
            Assists +
            Turnover +
+           Two.Pointer.Attempts +
            Three.Pointers.Attempted +
            Free.Throws.Attempted,
   data = df
@@ -45,6 +57,10 @@ summary(full_offensive_model)
 
 ```{r}
 #Running backwards elimination on the model
-step(full_offensive_model, direction = "backward")
+backward_offensive_model <- step(full_offensive_model, direction = "backward")
+summary(backward_offensive_model)
+
+#Running an f-test
+anova(backward_offensive_model, full_offensive_model)
 ```
 
