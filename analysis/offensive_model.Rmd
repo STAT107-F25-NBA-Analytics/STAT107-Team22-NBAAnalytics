@@ -25,11 +25,13 @@ df <- df %>%
                   Offensive.Rebounds +
                   Turnover
   )
+summary(df$Possessions)
 # Estimated offensive efficiency
 df <- df %>%
   mutate(
-    OffensiveEfficiency = Points / Possessions
+    OffensiveEfficiency = ifelse(Possessions <= 0, NA, Points / Possessions)
   )
+summary(df$OffensiveEfficiency)
 
 head(df[, c("Team.Name","Points", "Possessions", "OffensiveEfficiency")])
 
@@ -53,6 +55,24 @@ full_offensive_model <- lm(
 
 #Summary of the model
 summary(full_offensive_model)
+plot(full_offensive_model)
+
+
+```
+```{r}
+vif(full_offensive_model)
+resettest(full_offensive_model)
+
+```
+```{r}
+par(mfrow=c(3,3))
+for(col in c("Two.Pointer.Accuracy","Three.Pointer.Accuracy","Free.Throw.Accuracy",
+             "Offensive.Rebounds","Assists","Turnover",
+             "Two.Pointer.Attempts","Three.Pointers.Attempted","Free.Throws.Attempted")) {
+  plot(df[[col]], residuals(full_offensive_model))
+  main = col
+  abline(h=0, col="red")
+}
 ```
 
 ```{r}
