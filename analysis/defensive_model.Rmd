@@ -4,23 +4,14 @@ output: html_document
 ---
 
 ```{r}
-library(tidyverse)
-library(dplyr)
-
-df <- read.csv("../data/nba_clean.csv")
+df <- read.csv("../data/nba_processed.csv")
 
 
 #Computing team's own points
 df <- df %>%
   mutate(
-    Points = (Field.Goals.Made - Three.Pointers.Made) * 2 +
-             Three.Pointers.Made * 3 +
-             Free.Throws.Made,
-    
-    Possessions = Field.Goals.Attempted +
-                  0.44 * Free.Throws.Attempted -
-                  Offensive.Rebounds +
-                  Turnover
+    Points = Two.Pointers.Made * 2 + Three.Pointers.Made * 3 + Free.Throws.Made,
+    Possessions = Two.Pointer.Attempts + Three.Pointers.Attempted + 0.44 * Free.Throws.Attempted - Offensive.Rebounds + Turnover
   )
 
 #Creating clean opponent table
@@ -35,25 +26,39 @@ df_joined <- df %>%
 #Computing opponent's points
 df_joined <- df_joined %>%
   mutate(
-    OppPoints = (Opp_Field.Goals.Made - Opp_Three.Pointers.Made) * 2 +
-            Opp_Three.Pointers.Made * 3 +
-            Opp_Free.Throws.Made,
-
-    OppPossessions = Opp_Field.Goals.Attempted +
-                 0.44 * Opp_Free.Throws.Attempted -
-                 Opp_Offensive.Rebounds +
-                 Opp_Turnover,
-
+    OppPoints = Opp_Two.Pointers.Made * 2 + Opp_Three.Pointers.Made * 3 + Opp_Free.Throws.Made,
+    OppPossessions = Opp_Two.Pointer.Attempts + Opp_Three.Pointers.Attempted + 0.44 * Opp_Free.Throws.Attempted - Opp_Offensive.Rebounds + Opp_Turnover,
     DefensiveEfficiency = OppPoints / OppPossessions
   )
 
-df_joined %>%
-  select(Game.ID,
-         Team.Abbreviation, Opp_Team.Abbreviation,
-         Points, OppPoints,
-         Possessions, OppPossessions,
-         DefensiveEfficiency) %>%
-  head(5)
+#Selecting defensive variables
+defense_data <- df_joined %>%
+  select(
+    DefensiveEfficiency,
+    Defensive.Rebounds,
+    Steals,
+    Blocks,
+    Blocks.Against,
+    Personal.Fouls,
+    Turnover,
+    Total.Rebounds
+  )
+```
+
+
+```{r}
+#Fitting full defensive model
+full_defensive_model <- lm(DefensiveEfficiency ~ ., data = defense_data)
+summary(full_defensive_model)
+
+```
+
+
+```{r}
+#Running backwards elimination
+backward_defensive_model <- step(full_defensive_model, direction = "backward")
+summary(backward_defensive_model)
+backward_defensive_model$anova
 
 ```
 
