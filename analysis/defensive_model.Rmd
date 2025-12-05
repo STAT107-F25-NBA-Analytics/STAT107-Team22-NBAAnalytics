@@ -4,8 +4,9 @@ output: html_document
 ---
 
 ```{r}
+source("../util/00_requirements.R")
 df <- read.csv("../data/nba_processed.csv")
-
+conflicts_prefer(dplyr::filter)
 
 #Computing team's own points
 df <- df %>%
@@ -48,9 +49,34 @@ defense_data <- df_joined %>%
 
 ```{r}
 #Fitting full defensive model
-full_defensive_model <- lm(DefensiveEfficiency ~ ., data = defense_data)
+full_defensive_model <- lm(DefensiveEfficiency ~ Defensive.Rebounds + Steals + Blocks +
+                                  Blocks.Against + Personal.Fouls + Turnover + Total.Rebounds,
+                                data = defense_data)
 summary(full_defensive_model)
+plot(full_defensive_model)
 
+```
+```{r}
+par(mfrow=c(3,3))
+
+for (col in c("Defensive.Rebounds", "Steals", "Blocks",
+              "Blocks.Against", "Personal.Fouls",
+              "Turnover", "Total.Rebounds")) {
+  
+  plot(defense_data[[col]],
+       residuals(full_defensive_model),
+       main = col,
+       xlab = col,
+       ylab = "Residuals")
+  
+  abline(h = 0, col = "red")
+}
+```
+
+
+```{r}
+vif(full_defensive_model)
+resettest(full_defensive_model)
 ```
 
 
@@ -58,6 +84,9 @@ summary(full_defensive_model)
 #Running backwards elimination
 backward_defensive_model <- step(full_defensive_model, direction = "backward")
 summary(backward_defensive_model)
+
+#Running an f-test
+anova(backward_defensive_model, full_defensive_model)
 backward_defensive_model$anova
 
 ```

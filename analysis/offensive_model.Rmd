@@ -41,14 +41,14 @@ head(df[, c("Team.Name","Points", "Possessions", "OffensiveEfficiency")])
 
 #Forming offensive model
 full_offensive_model <- lm(
-  OffensiveEfficiency ~ Two.Pointer.Accuracy +
-           Three.Pointer.Accuracy +
+  log(OffensiveEfficiency) ~ ns(Two.Pointer.Accuracy, df = 3) +
+           ns(Three.Pointer.Accuracy, df = 3) +
            Free.Throw.Accuracy +
            Offensive.Rebounds +
            Assists +
            Turnover +
-           Two.Pointer.Attempts +
-           Three.Pointers.Attempted +
+          ns(Two.Pointer.Attempts, df = 3) +
+          ns(Three.Pointers.Attempted, df = 3) +
            Free.Throws.Attempted,
   data = df
 )
@@ -69,8 +69,12 @@ par(mfrow=c(3,3))
 for(col in c("Two.Pointer.Accuracy","Three.Pointer.Accuracy","Free.Throw.Accuracy",
              "Offensive.Rebounds","Assists","Turnover",
              "Two.Pointer.Attempts","Three.Pointers.Attempted","Free.Throws.Attempted")) {
-  plot(df[[col]], residuals(full_offensive_model))
-  main = col
+
+  plot(df[[col]], residuals(full_offensive_model),
+       main = col,
+       xlab = col,
+       ylab = "Residuals")
+
   abline(h=0, col="red")
 }
 ```
@@ -82,5 +86,6 @@ summary(backward_offensive_model)
 
 #Running an f-test
 anova(backward_offensive_model, full_offensive_model)
+backward_offensive_model$anova
 ```
 
