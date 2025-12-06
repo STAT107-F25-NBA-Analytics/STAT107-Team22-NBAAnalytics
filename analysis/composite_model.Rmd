@@ -1,0 +1,62 @@
+---
+title: "composite_model"
+output: html_document
+---
+
+```{r}
+source("../util/00_requirements.R")
+
+#Copying offensive and defensive win models
+offense_win_model <- readRDS("offense_win_model.rds")
+defense_win_model <- readRDS("defense_win_model.rds")
+
+
+df_joined <- df_joined %>%
+  mutate(Win = ifelse(Win.Loss.Status == "W", 1, 0))
+
+defense_lp <- predict(defense_win_model, newdata = df_joined, type = "link")
+offense_lp <- predict(offense_win_model, newdata = df_joined, type = "link")
+
+composite_lp <- defense_lp + offense_lp
+df_joined$composite_prob <- 1 / (1 + exp(-composite_lp))
+
+#Fitting composite model
+composite_model <- glm(
+  Win ~ Two.Pointer.Accuracy + Three.Pointer.Accuracy + Free.Throw.Accuracy +
+        Offensive.Rebounds + Assists + Turnover + Two.Pointer.Attempts +
+        Three.Pointers.Attempted + Free.Throws.Attempted +
+        Defensive.Rebounds + Steals + Blocks + Blocks.Against + Personal.Fouls + Total.Rebounds,
+  data = df_joined,
+  family = binomial
+)
+
+summary(composite_model)
+```
+```{r}
+#Redefining offensive and defensive efficiency
+df_joined <- df_joined %>%
+  mutate(
+    OffensiveEfficiency = Two.Pointer.Accuracy*2 + Three.Pointer.Accuracy*3 + Free.Throw.Accuracy,
+    DefensiveEfficiency = Defensive.Rebounds + Steals + Blocks
+  )
+```
+
+
+```{r}
+#Comparing win probability of composite model to defensive and iffensive efficiency
+plot(df_joined$OffensiveEfficiency, df_joined$PredictedWinProb,
+     xlab = "Offensive Efficiency",
+     ylab = "Predicted Win Probability",
+     main = "Composite Win Probability vs Offensive Efficiency",
+     pch = 19, col = "blue")
+
+# Optional: plot against Defensive Efficiency
+plot(df_joined$DefensiveEfficiency, df_joined$PredictedWinProb,
+     xlab = "Defensive Efficiency",
+     ylab = "Predicted Win Probability",
+     main = "Composite Win Probability vs Defensive Efficiency",
+     pch = 19, col = "red")
+```
+
+```
+

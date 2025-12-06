@@ -103,6 +103,7 @@ summary(offense_win_model)
 plot(df$OffensiveEfficiency, df$PredictedWinProb,
      xlab="Offensive Efficiency", ylab="Win Probability",
      main="Win Probability vs Offensive Efficiency")
+saveRDS(offense_win_model, "offense_win_model.rds")
 ```
 
 ```{r}
