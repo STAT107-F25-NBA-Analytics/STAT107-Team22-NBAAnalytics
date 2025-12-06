@@ -214,8 +214,9 @@ timeseriesgraph("Turnover")
 timeseriesgraph("Steals")
 ```
 
+
 ``` {r}
-timeseriesgraph("Free Throws Attempted")
+timeseriesgraph("Two Pointer Accuracy")
 ```
 
 ``` {r}

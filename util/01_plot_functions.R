@@ -95,7 +95,7 @@ winningness_prop <- function(y) {
   print(p)
   
   # Building filename dynamically
-  fname <- paste0("../img/plots/", y_mod, "_Winningness", ".png")
+  fname <- paste0("../img/plots/", y_mod, "_Winningness-For-Props", ".png")
   
   # Saving the plot
   ggsave(fname, p, width = 6, height = 4, dpi = 600)
