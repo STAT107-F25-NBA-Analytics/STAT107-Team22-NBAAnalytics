@@ -52,10 +52,10 @@ full_offensive_model <- lm(
            Free.Throws.Attempted,
   data = df
 )
-
 #Summary of the model
 summary(full_offensive_model)
 plot(full_offensive_model)
+
 
 
 ```
@@ -78,14 +78,40 @@ for(col in c("Two.Pointer.Accuracy","Three.Pointer.Accuracy","Free.Throw.Accurac
   abline(h=0, col="red")
 }
 ```
+```{r}
+#Creating Win variable
+df <- df %>%
+  mutate(Win = ifelse(Win.Loss.Status == "W", 1, 0))
+         
+#Changing model to win regression model
+offense_win_model <- glm(
+  Win ~ ns(Two.Pointer.Accuracy, df = 3) +
+         ns(Three.Pointer.Accuracy, df = 3) +
+         Free.Throw.Accuracy +
+         Offensive.Rebounds +
+         Assists +
+         Turnover +
+         ns(Two.Pointer.Attempts, df = 3) +
+         ns(Three.Pointers.Attempted, df = 3) +
+         Free.Throws.Attempted,
+  data = df,
+  family = binomial
+)
+#Summary of the model
+df$PredictedWinProb <- predict(offense_win_model, type = "response")
+summary(offense_win_model)
+plot(df$OffensiveEfficiency, df$PredictedWinProb,
+     xlab="Offensive Efficiency", ylab="Win Probability",
+     main="Win Probability vs Offensive Efficiency")
+```
 
 ```{r}
 #Running backwards elimination on the model
-backward_offensive_model <- step(full_offensive_model, direction = "backward")
+backward_offensive_model <- step(offense_win_model, direction="backward")
 summary(backward_offensive_model)
 
 #Running an f-test
-anova(backward_offensive_model, full_offensive_model)
+anova(backward_offensive_model, offense_win_model)
 backward_offensive_model$anova
 ```
 
