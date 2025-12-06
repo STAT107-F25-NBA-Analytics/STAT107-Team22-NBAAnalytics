@@ -181,8 +181,7 @@ $$\rho = 0.028$$
 Both metrics have extremely low correlation magnitudes, and as a result, all three of these variables will be included in the full defensive model prior to pruning.
 
 ## Analysis
-
-Next Steps:
+We had two different versions of the defensive, offensive and composite models. The version that wasn't selected is in the analysis folder.
 
 Full Offensive Model + Backwards Elimination
 
@@ -193,6 +192,9 @@ Develop Composite Model:
 $$ C = O + M$$
 
 Nested F-test Analysis
+
+## Conclusion
+
 
 ## Citations
 
