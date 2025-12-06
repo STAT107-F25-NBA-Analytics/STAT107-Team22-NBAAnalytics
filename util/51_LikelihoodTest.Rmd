@@ -3,3 +3,17 @@ title: "51_LikelihoodTest"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("00_requirements.R")
+source("01_plot_functions.R")
+load("../data/42_NBA-Analysis.RData")
+```
+
+``` {r}
+anova(defense_model, full_model, test = "Chisq")
+```
+
+``` {r}
+anova(offense_model, full_model, test = "Chisq")
+```

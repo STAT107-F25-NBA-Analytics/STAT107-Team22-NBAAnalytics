@@ -22,15 +22,17 @@ load("data/43_NBA-Analysis.RData")
 
 ## Abstract
 
-Dunk or get dunked on — that’s the name of the game when it comes to the NBA. You have twenty-four seconds to sink a shot or get one put down on your hoop, and currently the rules have seemed to strongly favor offenses and penalize physical defenses. Does that mean defense is less useful now, or does defense still play just as crucial a part and simply look different from what we expect? This paper seeks to investigate what efficient defenses and offenses look like by identifying key metrics that aggregate to describe efficient play, and ultimately analyze what wins games more, scoring points or allowing points. To conduct this analysis, we will develop models describing offensive and defensive efficiency and apply nested F-tests across the models and an aggregate to identify which contributes more to winning games. (Insert findings later)
+Dunk or get dunked on — that’s the name of the game when it comes to the NBA. You have twenty-four seconds to sink a shot or get one put down on your hoop, and currently the rules have seemed to strongly favor offenses and penalize physical defenses. Does that mean defense is less useful now, or does defense still play just as crucial a part and simply look different from what we expect? This paper seeks to investigate what efficient defenses and offenses look like by identifying key metrics that aggregate to describe efficient play, and ultimately analyze what wins games more, scoring points or allowing points. To conduct this analysis, we will develop models describing offensive and defensive efficiency and apply nested F-tests across the models and an aggregate to identify which contributes more to winning games. According to the research's findings, we strongly conclude that offensive and defensive playstyles have changed over the years to shape the game into an offense-first technical game, bringing the game even moreso towards the non-contact and skill side of the sports spectrum.
 
 ## Introduction
 
 The NBA's rulebook since 2004 and ongoing regularly makes updates that drive the game to at least seem both extremely offense-driven and defense-second, with the latter seemingly being a mere afterthought if not outright not integrated into defensive philosophies. This perception of the game may have a strong sense of truth, but there is a very viable possibility that it only describes half the game and leaves sorely underdeveloped defensive outlook and strategy. To bring the best out of players' technical abilities, strengthen and develop the NBA-seeking talent pool with both the players and aspiring coaches, and help the NBA tangibly understand how to fight now-rampant criticisms of the NBA 'going soft', it is crucial to better understand the current defensive structure of the game and how to best develop it. By analyzing which key metrics contribute to defensive or offensive efficiency and developing models to understand how much each throughput affects winning outcomes, we can create this better understanding of the flipside to the offensive-minded game style. In order to best conduct this analysis, we will break the analysis into two phases.
 
+## Methodologies
+
 For the first phase of analysis, we will first categorize the variables into defensive and offensive categories. Once we class the variables, we will test for intercategorical collinearity and develop a full model that selects one variable per collinear relationship to avoid redundancy. Once the full model is developed, we will employ techniques like backwards elimination to develop statistically significant offensive and defensive models that explain a team's win within a game accurately.
 
-For the second phase of analysis, we will then create an aggregate model from the two initial models that is computed as a composite. Using all three models the, we will conduct nested F-tests to determine whether the offensive model or defensive model provides the stronger signal within the composite.
+For the second phase of analysis, we will then create an aggregate model from the two initial models that is computed as a composite. Using all three models, we will conduct nested $\chi^2$-tests of likelihood to determine whether the offensive model or defensive model provides the stronger signal within the composite.
 
 ## Data
 
@@ -355,8 +357,8 @@ stargazer(
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{img/plots/corr_heatmap.png}
-\vspace{0.75em}
+\includegraphics[width=\linewidth]{img/plots/corr_heatmap.png}
+\vspace{0.25em}
 \textbf{Figure 2.1: Correlation Heatmap}
 \end{figure}
 
@@ -366,9 +368,9 @@ We only observe a seemingly-strong colinearity between 2PP and ORB, so we verify
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{img/plots/Two_Pointer_Accuracy_vs_Offensive_Rebounds.png}
+\includegraphics[width=1\linewidth]{img/plots/Two_Pointer_Accuracy_vs_Offensive_Rebounds.png}
 \vspace{0.75em}
-$\rho = -0.31, \text{ } p < 2.2 \times 10^{-16} $
+$\rho = -0.31, \text{ } p < 2.2 \times 10^{-16} $ \\
 \textbf{Figure 2.2: Correlation Heatmap}
 \end{figure}
 
@@ -397,13 +399,15 @@ Offense → Full & Offense Only & 28436 & 30449 & \\\\
 ")
 ```
 
+Since the deviance drop for offense is lower than defense, this implies the offensive model fits tighter and feeds more signal to the full model.
+
 ## Conclusions
 We can conclusively say that the stereotype is more or less right — offense contributes significantly more to winning games. Both defense and offense significantly contribute to a winning game, but that finding is more or less trivial. The difference from the ANOVA tables strongly indicates that offense clearly has the stronger contribution between the two.
 
-## Conclusion
-
-
 ## Citations
+
+Hlavac M (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables. Social Policy Institute, Bratislava, Slovakia. R package version 5.2.3, https://CRAN.R-project.org/package=stargazer.
+[![DOI](img/util/stargazer-R_summary-blue.png)](https://CRAN.R-project.org/package=stargazer)
 
 Korolyk, Vitalii. “NBA Data 2010-2024 by NocturneBear.” GitHub, NocturneBear, 2024, github.com/NocturneBear/NBA-Data-2010-2024. 
 

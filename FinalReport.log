@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.11.27)  6 DEC 2025 01:59
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.11.27)  6 DEC 2025 03:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -812,21 +812,21 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 78.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 136.
+(Font)              scaled to size 7.0pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 136.
+(Font)              scaled to size 5.0pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 10.00092pt on input line 136.
+(Font)              scaled to size 10.00092pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 7.00064pt on input line 136.
+(Font)              scaled to size 7.00064pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.00046pt on input line 136.
+(Font)              scaled to size 5.00046pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 9.99893pt on input line 136.
+(Font)              scaled to size 9.99893pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 6.99925pt on input line 136.
+(Font)              scaled to size 6.99925pt on input line 131.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 4.99947pt on input line 136.
+(Font)              scaled to size 4.99947pt on input line 131.
 [1
 
 ] [2] [3] [4]
@@ -871,14 +871,17 @@ File: img/plots/corr_heatmap.png Graphic file (type bmp)
 [19] [20]
 File: img/plots/Two_Pointer_Accuracy_vs_Offensive_Rebounds.png Graphic file (type bmp)
 <img/plots/Two_Pointer_Accuracy_vs_Offensive_Rebounds.png>
-[21]
-Overfull \hbox (61.79192pt too wide) in paragraph at lines 811--813
-\TU/lmr/m/n/10 Korolyk, Vitalii. “NBA Data 2010-2024 by NocturneBear.” GitHub, NocturneBear, 2024, github.com/NocturneBear/NBA-
+[21] [22]
+File: img/util/stargazer-R_summary-blue.png Graphic file (type bmp)
+<img/util/stargazer-R_summary-blue.png>
+
+Overfull \hbox (61.79192pt too wide) in paragraph at lines 826--828
+[]\TU/lmr/m/n/10 Korolyk, Vitalii. “NBA Data 2010-2024 by NocturneBear.” GitHub, NocturneBear, 2024, github.com/NocturneBear/NBA-
  []
 
 File: img/util/NocturneBear-NBA_Analytics-blue.png Graphic file (type bmp)
 <img/util/NocturneBear-NBA_Analytics-blue.png>
-[22] [23] (./FinalReport.aux)
+[23] (./FinalReport.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-11-14>
@@ -888,12 +891,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 16896 strings out of 470195
- 313834 string characters out of 5477817
- 873277 words of memory out of 5000000
- 45270 multiletter control sequences out of 15000+600000
+ 16907 strings out of 470195
+ 314227 string characters out of 5477817
+ 871314 words of memory out of 5000000
+ 45280 multiletter control sequences out of 15000+600000
  634132 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 90i,10n,114p,354b,416s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,10n,114p,354b,401s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on FinalReport.pdf (23 pages).
