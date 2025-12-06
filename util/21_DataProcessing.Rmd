@@ -12,19 +12,35 @@ load("../data/11_NBA-Analysis.RData")
 ```
 
 
-```{r cars}
+```{r}
 # Computing Two Point Attempts/Makes/Accuracy To Decompose Field Goal metrics
 nba_derived <- nba_clean %>%
   mutate(
     `Two Pointer Attempts` = `Field Goals Attempted` - `Three Pointers Attempted`,
     `Two Pointers Made`     = `Field Goals Made`      - `Three Pointers Made`,
     `Two Pointer Accuracy`        = if_else(`Two Pointer Attempts` == 0, NA_real_,
-                                   `Two Pointers Made` / `Two Pointer Attempts`)
+                                  round(`Two Pointers Made` / `Two Pointer Attempts`, 3))
   )
+```
 
+``` {r}
+nba_derived <- nba_clean %>%
+  mutate(
+    `Three Point Volume` = round(`Three Pointers Attempted` / `Field Goals Attempted`, 3)
+  )
+```
+
+``` {r}
 nba_processed <- nba_derived[ , !(names(nba_derived) %in% c("Field Goals Attempted", "Field Goals Made", "Field Goal Accuracy")) ]
 
 write.csv(nba_processed, "../data/nba_processed.csv", row.names = FALSE)
+head(nba_processed, 10)
+```
+
+
+``` {r}
+# Set it up for time series graphing of metrics
+nba_processed <- nba_processed[order(nba_processed$Season), ]
 head(nba_processed, 10)
 ```
 
