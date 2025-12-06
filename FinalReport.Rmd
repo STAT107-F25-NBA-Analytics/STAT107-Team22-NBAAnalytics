@@ -15,7 +15,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("util/00_requirements.R")
-# load("data/22_DataSaving.RData")
+load("data/41_NBA-Analysis.RData")
 ```
 
 ## Abstract
@@ -100,24 +100,24 @@ After computing these derived metrics, general field goals is rendered fully obs
 ### Metrics
 - Three Pointers Made (3PM)
 - Three Pointers Attempted (3PA)
-- Three Pointer Accuracy (3P%)
+- Three Pointer Accuracy (3PP)
 - Three Point Volume (3PV)
 - Free Throws Made (FTM)
 - Free Throws Attempted (FTA)
-- Free Throw Accuracy (FT%)
+- Free Throw Accuracy (FTP)
 - Offensive Rebounds (ORB)
 - Defensive Rebounds (DRB)
 - Total Rebounds (RB)
-- Assists (ASS)
+- Assists (AST)
 - Turnovers (TOV)
 - Steals (ST)
-- Blocks (B)
+- Blocks (BLK)
 - Blocks Against (BA)
 - Personal Fouls (PF)
 - Personal Fouls Drawn (PFD)
 - Two Pointers Made (2PM)
 - Two Pointers Attempted (2PA)
-- Two Pointer Accuracy (2P%)
+- Two Pointer Accuracy (2PP)
 
 As a final preliminary to EDA and data visualization, we will also categorize the metrics between offense and defense as follows along with rationale:
 
@@ -207,23 +207,133 @@ Steal count has drastically decreased over the years, and this dramatic decrease
 
 \newpage
 
-As a result, we naturally expect to see that offensive metrics have stronger associations to winning. While the data does seem to corroborate this intuition, especially when a Spearman test is applied, some of the data visually doesn't look strongly associated despite the Spearman test saying otherwise.
+Naturally, we expect to see that offensive metrics have stronger associations to winning. While the data does seem to corroborate this intuition, especially when a Spearman test is applied, some of the data visually doesn't look strongly associated despite the Spearman test saying otherwise.
 
-![](img/plots/Three_Point_Volume_Winningness-For-Props.png)
-\begin{center}
-$3x^2$
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Three_Point_Volume_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.017,\ p \approx 0.004$ \\
 \textbf{Figure 1.8: Winningness of 3PV}
-\end{center}
+\end{figure}
 
-Surprisingly, 3
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Three_Pointer_Accuracy_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.333,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.9: Winningness of 3P\%}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Two_Pointer_Accuracy_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.301,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.10: Winningness of 2P\%}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Assists_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.296,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.11: Winningness of Assists}
+\end{figure}
+
+\newpage
+
+Spearman tests confirm extremely significant results indicating that several of these offensive metrics have not only a strong association with winning ability, but also a positive one at that. Naturally so, but a good reminder to have due to the perception of offense-only, defensive metrics strongly associate as well.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Steals_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.296,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.12: Winningness of Steals}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Blocks_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.164,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.13: Winningness of Blocks}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Defensive_Rebounds_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.355,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.14: Winningness of Defensive Rebounds}
+\end{figure}
+
+As a result of these strong findings, we can move forward with analysis on logistic regression fits for both offensive and defensive models, and then further check which contributes more to winningness.
+
+\newpage
 
 ## Analysis
 
-Next Steps:
+Firstly, we develop an offensive model via logistic regression against winningness. Note that during logistic regression, the range will produce $\text{W} \in \text{ }[0,1]$, but it is incorrect to interpret a select value of $\text{W}$ as a true probability of winning, as this is not a predictive model and is only inferential. Let us describe this full model as such
 
-Full Offensive Model + Backwards Elimination
+$$\mathscr O(X)=\mathbb{E}[Y|X]$$
+$$ \mathscr O : Y=f(X)+ \epsilon$$
 
-Full Defensive Model + Backwards Elimination
+$$ P(Y=1|X) = \frac{1}{1+e^{-z}} $$
+
+$$  z= \beta_0 \text{3PV} + \beta_1 \text{3PP} + \beta_2 \text{2PP} + \beta_3 \text{FTP} + \beta_4 \text{AST} + \beta_5 \text{ORB} + \beta_6 \text{TOV} + + \beta_7 \text{PFD} + \beta_8 \text{BA}$$
+
+
+After running the regression, the full model produces these results.
+
+``` {r, results='asis', echo=FALSE}
+stargazer(
+  offense_model,
+  type = "latex",
+  title = "Offensive Logistic Regression Results",
+  dep.var.labels = "Win Probability",
+  covariate.labels = c("3PV", "3PP", "2PP", "FTP", "AST", "ORB", "TOV", "PFD", "BA"),
+  digits = 3,
+  no.space = TRUE,
+  omit.table.note = TRUE,
+  header = FALSE
+)
+```
+
+Since all metrics are statistically significant, there is no backwards elimination needed.
+
+Next, we develop an defensive model in a very similar way. Let us describe this full model as such
+
+$$\mathscr D(X)=\mathbb{E}[Y|X]$$
+$$ \mathscr D : Y=f(X)+ \epsilon$$
+
+$$ P(Y=1|X) = \frac{1}{1+e^{-z}} $$
+
+$$  z= \beta_0 \text{ST} + \beta_1 \text{DRB} + \beta_2 \text{PF} + \beta_3 \text{BLK}$$
+
+After running the regression, the full defensive model produces these results.
+
+``` {r, results='asis', echo=FALSE}
+stargazer(
+  defense_model,
+  type = "latex",
+  title = "Defensive Logistic Regression Results",
+  dep.var.labels = "Win Probability",
+  covariate.labels = c("ST", "DRB", "PF", "BLK"),
+  digits = 3,
+  no.space = TRUE,
+  omit.table.note = TRUE,
+  header = FALSE
+)
+```
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/corr_heatmap.png}
+\vspace{0.75em}
+\textbf{Figure 1.14: Winningness of Defensive Rebounds}
+\end{figure}
 
 Develop Composite Model: 
 

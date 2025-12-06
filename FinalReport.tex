@@ -273,7 +273,7 @@ named like so:
 \item
   Three Pointers Attempted (3PA)
 \item
-  Three Pointer Accuracy (3P\%)
+  Three Pointer Accuracy (3PP)
 \item
   Three Point Volume (3PV)
 \item
@@ -281,7 +281,7 @@ named like so:
 \item
   Free Throws Attempted (FTA)
 \item
-  Free Throw Accuracy (FT\%)
+  Free Throw Accuracy (FTP)
 \item
   Offensive Rebounds (ORB)
 \item
@@ -289,13 +289,13 @@ named like so:
 \item
   Total Rebounds (RB)
 \item
-  Assists (ASS)
+  Assists (AST)
 \item
   Turnovers (TOV)
 \item
   Steals (ST)
 \item
-  Blocks (B)
+  Blocks (BLK)
 \item
   Blocks Against (BA)
 \item
@@ -307,7 +307,7 @@ named like so:
 \item
   Two Pointers Attempted (2PA)
 \item
-  Two Pointer Accuracy (2P\%)
+  Two Pointer Accuracy (2PP)
 \end{itemize}
 
 As a final preliminary to EDA and data visualization, we will also
@@ -479,28 +479,212 @@ free throw attempt to be taken.
 
 \newpage
 
-As a result, we naturally expect to see that offensive metrics have
-stronger associations to winning. While the data does seem to
-corroborate this intuition, especially when a Spearman test is applied,
-some of the data visually doesn't look strongly associated despite the
-Spearman test saying otherwise.
+Naturally, we expect to see that offensive metrics have stronger
+associations to winning. While the data does seem to corroborate this
+intuition, especially when a Spearman test is applied, some of the data
+visually doesn't look strongly associated despite the Spearman test
+saying otherwise.
 
-\pandocbounded{\includegraphics[keepaspectratio]{img/plots/Three_Point_Volume_Winningness-For-Props.png}}
-
-\begin{center}
-$3x^2$
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Three_Point_Volume_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.017,\ p \approx 0.004$ \\
 \textbf{Figure 1.8: Winningness of 3PV}
-\end{center}
+\end{figure}
 
-Surprisingly, 3
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Three_Pointer_Accuracy_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.333,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.9: Winningness of 3P\%}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Two_Pointer_Accuracy_Winningness-For-Props.png}
+\vspace{0.75em}
+$\rho = 0.301,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.10: Winningness of 2P\%}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Assists_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.296,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.11: Winningness of Assists}
+\end{figure}
+
+\newpage
+
+Spearman tests confirm extremely significant results indicating that
+several of these offensive metrics have not only a strong association
+with winning ability, but also a positive one at that. Naturally so, but
+a good reminder to have due to the perception of offense-only, defensive
+metrics strongly associate as well.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Steals_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.296,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.12: Winningness of Steals}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Blocks_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.164,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.13: Winningness of Blocks}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Defensive_Rebounds_Winningness.png}
+\vspace{0.75em}
+$\rho = 0.355,\ p < 2.2 \times 10^{-16}$ \\
+\textbf{Figure 1.14: Winningness of Defensive Rebounds}
+\end{figure}
+
+As a result of these strong findings, we can move forward with analysis
+on logistic regression fits for both offensive and defensive models, and
+then further check which contributes more to winningness.
+
+\newpage
 
 \subsection{Analysis}\label{analysis}
 
-Next Steps:
+Firstly, we develop an offensive model via logistic regression against
+winningness. Note that during logistic regression, the range will
+produce \(\text{W} \in \text{ }[0,1]\), but it is incorrect to interpret
+a select value of \(\text{W}\) as a true probability of winning, as this
+is not a predictive model and is only inferential. Let us describe this
+full model as such
 
-Full Offensive Model + Backwards Elimination
+\[\mathscr O(X)=\mathbb{E}[Y|X]\] \[ \mathscr O : Y=f(X)+ \epsilon\]
 
-Full Defensive Model + Backwards Elimination
+\[ P(Y=1|X) = \frac{1}{1+e^{-z}} \]
+
+\[  z= \beta_0 \text{3PV} + \beta_1 \text{3PP} + \beta_2 \text{2PP} + \beta_3 \text{FTP} + \beta_4 \text{AST} + \beta_5 \text{ORB} + \beta_6 \text{TOV} + + \beta_7 \text{PFD} + \beta_8 \text{BA}\]
+
+After running the regression, the full model produces these results.
+
+\begin{table}[!htbp] \centering 
+  \caption{Offensive Logistic Regression Results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Win Probability \\ 
+\hline \\[-1.8ex] 
+ 3PV & $-$2.927$^{***}$ \\ 
+  & (0.160) \\ 
+  3PP & 10.227$^{***}$ \\ 
+  & (0.195) \\ 
+  2PP & 12.063$^{***}$ \\ 
+  & (0.268) \\ 
+  FTP & 2.665$^{***}$ \\ 
+  & (0.139) \\ 
+  AST & 0.034$^{***}$ \\ 
+  & (0.003) \\ 
+  ORB & 0.105$^{***}$ \\ 
+  & (0.004) \\ 
+  TOV & $-$0.084$^{***}$ \\ 
+  & (0.004) \\ 
+  PFD & 0.093$^{***}$ \\ 
+  & (0.003) \\ 
+  BA & $-$0.065$^{***}$ \\ 
+  & (0.006) \\ 
+  Constant & $-$13.194$^{***}$ \\ 
+  & (0.236) \\ 
+ \hline \\[-1.8ex] 
+Observations & 28,446 \\ 
+Log Likelihood & $-$15,224.370 \\ 
+Akaike Inf. Crit. & 30,468.750 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+\begin{table}[!htbp] \centering 
+  \caption{Offensive Logistic Regression Results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}} c} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+TRUE \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+
+Since all metrics are statistically significant, there is no backwards
+elimination needed.
+
+Next, we develop an defensive model in a very similar way. Let us
+describe this full model as such
+
+\[\mathscr D(X)=\mathbb{E}[Y|X]\] \[ \mathscr D : Y=f(X)+ \epsilon\]
+
+\[ P(Y=1|X) = \frac{1}{1+e^{-z}} \]
+
+\[  z= \beta_0 \text{ST} + \beta_1 \text{DRB} + \beta_2 \text{PF} + \beta_3 \text{BLK}\]
+
+After running the regression, the full defensive model produces these
+results.
+
+\begin{table}[!htbp] \centering 
+  \caption{Defensive Logistic Regression Results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Win Probability \\ 
+\hline \\[-1.8ex] 
+ ST & 0.165$^{***}$ \\ 
+  & (0.003) \\ 
+  DRB & 0.162$^{***}$ \\ 
+  & (0.005) \\ 
+  PF & $-$0.055$^{***}$ \\ 
+  & (0.003) \\ 
+  BLK & 0.093$^{***}$ \\ 
+  & (0.005) \\ 
+  Constant & $-$6.058$^{***}$ \\ 
+  & (0.124) \\ 
+ \hline \\[-1.8ex] 
+Observations & 28,446 \\ 
+Log Likelihood & $-$16,888.260 \\ 
+Akaike Inf. Crit. & 33,786.520 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+\begin{table}[!htbp] \centering 
+  \caption{Defensive Logistic Regression Results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}} c} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+TRUE \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/corr_heatmap.png}
+\vspace{0.75em}
+\textbf{Figure 1.14: Winningness of Defensive Rebounds}
+\end{figure}
 
 Develop Composite Model:
 

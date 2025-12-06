@@ -43,116 +43,6 @@ cor.test(
   method = "pearson")
 ```
 
-``` {r}
-# Putting heatmap construction in local so as not 
-local({
-  heatmap_corr <- pheatmap(
-    cor(nba_processed[, sapply(nba_processed, is.numeric)], use = "complete.obs"),
-    color = colorRampPalette(c("#132B43", "#56B1F7", "#99FFFF"))(200),
-    border_color = NA,
-    cluster_rows = FALSE,
-    cluster_cols = FALSE,
-    fontsize = 10,
-    fontsize_col = 10,
-    fontsize_row = 10,
-    cellheight = 18
-  )
-  # 
-  # s <- ggplot(nba_processed, aes(`Steals`, `Personal Fouls`)) +
-  # geom_point(alpha = 0.6) +
-  # stat_ellipse(type = "norm", level = 0.95) +
-  # theme_minimal()
-  # 
-  # print(s)
-  
-  # ggsave("../img/plots/corr_heatmap.png", heatmap_corr, width = 8, height = 8, dpi = 600)
-
-  # ggplot(nba_processed %>%
-  #        group_by(`Season`) %>%
-  #        summarize(mean_pf = mean(`Personal Fouls`)),
-  #        aes(`Season`, mean_pf, group = 1)) +
-  #   geom_line(linewidth = 1.4, color = "#1F78B4") +
-  #   geom_point(size = 3, color = "#1F78B4") +
-  #   # labs(
-  #   #   title = "Personal Fouls by Season",
-  #   #   x = "Season",
-  #   #   y = "Personal Fouls"
-  #   # ) +
-  #   theme_minimal(base_size = 14) +
-  #   theme(
-  #     axis.text.x = element_text(angle = 45, hjust = 1),
-  #     plot.title = element_text(face = "bold", size = 18)
-  #   )
-  
-  
-  # metric_col <- "Steals"
-  # metric_sym <- rlang::sym(metric_col)
-  # 
-  # nba_processed %>%
-  #   mutate(metric_bin = cut(!!metric_sym, breaks = 100)) %>%  # bin metric
-  #   group_by(metric_bin) %>%
-  #   summarize(win_rate = mean(`Win/Loss Status` == "W"),
-  #             mid = mean(!!metric_sym)) %>%
-  #   ggplot(aes(x = mid, y = win_rate)) +
-  #   geom_point(size = 3, color = "#1F78B4") +
-  #   scale_y_continuous(breaks = c(0, 1),
-  #                      labels = c("Loss", "Win")) +
-  #   labs(
-  #     title = paste(metric_col, "vs Winningness"),
-  #     x = metric_col,
-  #     y = "Empirical Win Rate (Raw)"
-  #   ) +
-  #   theme_minimal(base_size = 14)
-  
-  # bin_mid = (as.numeric(sub("\\((.+),.*", "\\1", metric_bin)) +
-  #                as.numeric(sub(".*,(.+)\\]", "\\1", metric_bin))) / 2
-  
-  # metric_col <- "Three Pointer Accuracy"
-  # metric_sym <- rlang::sym(metric_col)
-  # 
-  # nba_processed %>%
-  #   mutate(metric_bin = cut(!!metric_sym, breaks = 100)) %>%        # 20 bins
-  #   group_by(metric_bin) %>%
-  #   summarize(
-  #     win_rate = mean(`Win/Loss Status` == "W"),                             # TRUE raw proportion
-  #     bin_mid = (as.numeric(sub("\\((.+),.*", "\\1", metric_bin)) +
-  #                as.numeric(sub(".*,(.+)\\]", "\\1", metric_bin))) / 2
-  #   ) %>%                                                          # proper midpoint from breaks
-  #   ggplot(aes(x = bin_mid, y = win_rate)) +
-  #   geom_point(size = 3, color = "#1F78B4") +
-  #   scale_y_continuous(
-  #     breaks = c(0,1),
-  #     labels = c("Loss", "Win")
-  #   ) +
-  #   labs(
-  #     title = paste(metric_col, "vs Winningness"),
-  #     x = metric_col,
-  #     y = "Empirical Win Rate"
-  #   ) +
-  #   theme_minimal(base_size = 14)
-  
-  # winningness_of("Steals")
-  
-
-  
-  # timeseriesgraph("Personal Fouls")
-
-  # ggplot(season_summary, aes(x = Season, y = avg_3pa, group = 1)) +
-  #   geom_line(linewidth = 1.4, color = "#1F78B4") +
-  #   geom_point(size = 3.2, color = "#1F78B4") +
-  #   labs(
-  #     title = "Average Three Pointers Attempted by Season",
-  #     x = "Season",
-  #     y = "Average 3PA"
-  #   ) +
-  #   theme_minimal(base_size = 14) +
-  #   theme(
-  #     axis.text.x = element_text(angle = 45, hjust = 1),
-  #     plot.title = element_text(face = "bold", size = 18),
-  #     panel.grid.minor = element_blank()
-  #   )
-})
-```
 
 ``` {r}
 winningness_prop("Three Pointer Accuracy")
@@ -165,7 +55,7 @@ cor.test(
 ``` {r}
 winningness_prop("Two Pointer Accuracy")
 cor.test(
-  nba_processed$`Three Pointer Accuracy`, 
+  nba_processed$`Two Pointer Accuracy`, 
   as.numeric(nba_processed$`Win/Loss Status` == "W"), 
   method = "spearman")
 ```
@@ -173,15 +63,15 @@ cor.test(
 ``` {r}
 winningness_prop("Three Point Volume")
 cor.test(
-  nba_processed$`Three Pointer Accuracy`, 
+  nba_processed$`Three Point Volume`, 
   as.numeric(nba_processed$`Win/Loss Status` == "W"), 
   method = "spearman")
 ```
 
 ``` {r}
-winningness_of("Three Pointers Attempted")
+winningness_of("Assists")
 cor.test(
-  nba_processed$`Three Pointer Accuracy`, 
+  nba_processed$`Assists`, 
   as.numeric(nba_processed$`Win/Loss Status` == "W"), 
   method = "spearman")
 ```
@@ -189,7 +79,23 @@ cor.test(
 ``` {r}
 winningness_of("Steals")
 cor.test(
-  nba_processed$`Three Pointer Accuracy`, 
+  nba_processed$`Steals`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+winningness_of("Defensive Rebounds")
+cor.test(
+  nba_processed$`Defensive Rebounds`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+winningness_of("Blocks")
+cor.test(
+  nba_processed$`Blocks`, 
   as.numeric(nba_processed$`Win/Loss Status` == "W"), 
   method = "spearman")
 ```
@@ -204,10 +110,6 @@ timeseriesgraph("Defensive Rebounds")
 
 ``` {r}
 timeseriesgraph("Offensive Rebounds")
-```
-
-``` {r}
-timeseriesgraph("Turnover")
 ```
 
 ``` {r}
