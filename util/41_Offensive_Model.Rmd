@@ -1,0 +1,28 @@
+---
+title: "41_Offensive_Model"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("00_requirements.R")
+source("01_plot_functions.R")
+load("../data/31_NBA-Analysis.RData")
+```
+
+
+``` {r}
+offense_model <- nba_processed %>%
+  mutate(Win = as.numeric(`Win/Loss Status` == "W")) %>%  
+  glm(
+    Win ~ `Three Point Volume` + `Three Pointer Accuracy` + `Two Pointer Accuracy` + `Free Throw Accuracy` + `Assists` + `Offensive Rebounds` + `Turnover` + `Personal Fouls Drawn` + `Blocks Against`,
+    data = .,
+    family = binomial(link = "logit")
+  )
+
+summary(offense_model)
+```
+
+``` {r}
+save.image("../data/41_NBA-Analysis.RData")
+```
