@@ -63,14 +63,15 @@
 ### Primary Contributions
  - Developed offensive model with backtrack elimination
  - Developed defensive model with bactrack elimination
+ - Tested models for any linearity, multicolinearity and exogeneity principles violations.
+ - Developed composite model
 ### Primary Contributions in Progress
-- Testing models for any violations
 - Running f-tests on defensive, offensive anf etc. models.
 - finishing analysis and writing analysis for the project.
 
-### LOC Added: 235
-### LOC Changed: 235
-### LOC Net: 235
-### Total Commits: 16
+### LOC Added: 304
+### LOC Changed: 304
+### LOC Net: 304
+### Total Commits: 17
 ### Issues Worked On: 6
-### PRs: 2
+### PRs: 3
