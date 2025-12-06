@@ -1,0 +1,130 @@
+---
+title: "defensive_model"
+output: html_document
+---
+
+```{r}
+source("../util/00_requirements.R")
+df <- read.csv("../data/nba_processed.csv")
+conflicts_prefer(dplyr::filter)
+
+#Computing team's own points
+df <- df %>%
+  mutate(
+    Points = Two.Pointers.Made * 2 + Three.Pointers.Made * 3 + Free.Throws.Made,
+    Possessions = Two.Pointer.Attempts + Three.Pointers.Attempted + 0.44 * Free.Throws.Attempted - Offensive.Rebounds + Turnover
+  )
+
+#Creating clean opponent table
+df_opp <- df %>%
+  rename_with(~ paste0("Opp_", .), -Game.ID)
+
+#Matching opponent's points by game ID
+df_joined <- df %>%
+  inner_join(df_opp, by = "Game.ID")%>%
+  filter(Team.ID != Opp_Team.ID)
+
+#Computing opponent's points
+df_joined <- df_joined %>%
+  mutate(
+    OppPoints = Opp_Two.Pointers.Made * 2 + Opp_Three.Pointers.Made * 3 + Opp_Free.Throws.Made,
+    OppPossessions = Opp_Two.Pointer.Attempts + Opp_Three.Pointers.Attempted + 0.44 * Opp_Free.Throws.Attempted - Opp_Offensive.Rebounds + Opp_Turnover,
+    DefensiveEfficiency = OppPoints / OppPossessions
+  )
+
+#Selecting defensive variables
+defense_data <- df_joined %>%
+  select(
+    DefensiveEfficiency,
+    Defensive.Rebounds,
+    Steals,
+    Blocks,
+    Blocks.Against,
+    Personal.Fouls,
+    Turnover,
+    Total.Rebounds
+  )
+```
+
+
+```{r}
+#Fitting full defensive model
+full_defensive_model <- lm(DefensiveEfficiency ~ Defensive.Rebounds + Steals + Blocks +
+                                  Blocks.Against + Personal.Fouls + Turnover + Total.Rebounds,
+                                data = defense_data)
+summary(full_defensive_model)
+plot(full_defensive_model)
+
+```
+```{r}
+par(mfrow=c(3,3))
+
+for (col in c("Defensive.Rebounds", "Steals", "Blocks",
+              "Blocks.Against", "Personal.Fouls",
+              "Turnover", "Total.Rebounds")) {
+  
+  plot(defense_data[[col]],
+       residuals(full_defensive_model),
+       main = col,
+       xlab = col,
+       ylab = "Residuals")
+  
+  abline(h = 0, col = "red")
+}
+```
+
+
+```{r}
+vif(full_defensive_model)
+resettest(full_defensive_model)
+```
+```{r}
+# Adding win variable
+defense_data <- df_joined %>%
+  mutate(Win = ifelse(Win.Loss.Status == "W", 1, 0)) %>%
+  select(
+    Win,
+    DefensiveEfficiency,
+    Defensive.Rebounds,
+    Steals,
+    Blocks,
+    Blocks.Against,
+    Personal.Fouls,
+    Turnover,
+    Total.Rebounds
+  )
+
+# Changing model to win regression model
+defense_win_model <- glm(
+  Win ~ Defensive.Rebounds + Steals + Blocks +
+         Blocks.Against + Personal.Fouls + Turnover + Total.Rebounds,
+  data = defense_data,
+  family = binomial
+)
+
+summary(defense_win_model)
+defense_data$PredictedWinProb <- predict(defense_win_model, type = "response")
+plot(defense_data$DefensiveEfficiency, defense_data$PredictedWinProb,
+     xlab = "Defensive Efficiency (Opponent Points per Possession)",
+     ylab = "Win Probability",
+     main = "Win Probability vs Defensive Efficiency")
+abline(h = 0.5, col = "red", lty = 2)
+```
+
+
+```{r}
+saveRDS(defense_win_model, "defense_win_model.rds")
+```
+
+
+```{r}
+#Running backwards elimination
+backward_defensive_model <- step(full_defensive_model, direction = "backward")
+summary(backward_defensive_model)
+
+#Running an f-test
+anova(backward_defensive_model, full_defensive_model)
+backward_defensive_model$anova
+
+```
+

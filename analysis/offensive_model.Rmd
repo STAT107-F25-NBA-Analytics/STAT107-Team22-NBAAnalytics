@@ -1,0 +1,118 @@
+---
+title: "offensive_model"
+output: html_document
+---
+
+```{r}
+source("../util/00_requirements.R")
+
+df <- read.csv("../data/nba_processed.csv")
+
+
+#Estimated Points scored
+df <- df %>%
+  mutate(
+    Points = Two.Pointers.Made * 2 +
+             Three.Pointers.Made * 3 +
+             Free.Throws.Made
+  )
+#Estimated number of offensive possessions
+df <- df %>%
+  mutate(
+    FG_Attempts_Total = Two.Pointer.Attempts + Three.Pointers.Attempted,
+    Possessions = FG_Attempts_Total +
+                  0.44 * Free.Throws.Attempted -
+                  Offensive.Rebounds +
+                  Turnover
+  )
+summary(df$Possessions)
+# Estimated offensive efficiency
+df <- df %>%
+  mutate(
+    OffensiveEfficiency = ifelse(Possessions <= 0, NA, Points / Possessions)
+  )
+summary(df$OffensiveEfficiency)
+
+head(df[, c("Team.Name","Points", "Possessions", "OffensiveEfficiency")])
+
+```
+```{r}
+
+
+#Forming offensive model
+full_offensive_model <- lm(
+  log(OffensiveEfficiency) ~ ns(Two.Pointer.Accuracy, df = 3) +
+           ns(Three.Pointer.Accuracy, df = 3) +
+           Free.Throw.Accuracy +
+           Offensive.Rebounds +
+           Assists +
+           Turnover +
+          ns(Two.Pointer.Attempts, df = 3) +
+          ns(Three.Pointers.Attempted, df = 3) +
+           Free.Throws.Attempted,
+  data = df
+)
+#Summary of the model
+summary(full_offensive_model)
+plot(full_offensive_model)
+
+
+
+```
+```{r}
+vif(full_offensive_model)
+resettest(full_offensive_model)
+
+```
+```{r}
+par(mfrow=c(3,3))
+for(col in c("Two.Pointer.Accuracy","Three.Pointer.Accuracy","Free.Throw.Accuracy",
+             "Offensive.Rebounds","Assists","Turnover",
+             "Two.Pointer.Attempts","Three.Pointers.Attempted","Free.Throws.Attempted")) {
+
+  plot(df[[col]], residuals(full_offensive_model),
+       main = col,
+       xlab = col,
+       ylab = "Residuals")
+
+  abline(h=0, col="red")
+}
+```
+```{r}
+#Creating Win variable
+df <- df %>%
+  mutate(Win = ifelse(Win.Loss.Status == "W", 1, 0))
+         
+#Changing model to win regression model
+offense_win_model <- glm(
+  Win ~ ns(Two.Pointer.Accuracy, df = 3) +
+         ns(Three.Pointer.Accuracy, df = 3) +
+         Free.Throw.Accuracy +
+         Offensive.Rebounds +
+         Assists +
+         Turnover +
+         ns(Two.Pointer.Attempts, df = 3) +
+         ns(Three.Pointers.Attempted, df = 3) +
+         Free.Throws.Attempted,
+  data = df,
+  family = binomial
+)
+#Summary of the model
+df$PredictedWinProb <- predict(offense_win_model, type = "response")
+summary(offense_win_model)
+plot(df$OffensiveEfficiency, df$PredictedWinProb,
+     xlab="Offensive Efficiency", ylab="Win Probability",
+     main="Win Probability vs Offensive Efficiency")
+saveRDS(offense_win_model, "offense_win_model.rds")
+```
+
+```{r}
+#Running backwards elimination on the model
+backward_offensive_model <- step(offense_win_model, direction="backward")
+summary(backward_offensive_model)
+
+#Running an f-test
+anova(backward_offensive_model, offense_win_model)
+backward_offensive_model$anova
+```
+

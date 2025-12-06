@@ -341,6 +341,9 @@ $$ C = O + M$$
 
 Nested F-test Analysis
 
+## Conclusion
+
+
 ## Citations
 
 Korolyk, Vitalii. “NBA Data 2010-2024 by NocturneBear.” GitHub, NocturneBear, 2024, github.com/NocturneBear/NBA-Data-2010-2024. 
