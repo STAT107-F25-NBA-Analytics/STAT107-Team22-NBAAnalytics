@@ -8,14 +8,16 @@ output:
     keep_tex: yes
     latex_engine: xelatex
     extra_dependencies: ['float']
-  header-includes:
-  - \usepackage{float} 
+
+header-includes:
+  - \usepackage{float}
+  - \usepackage{booktabs}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("util/00_requirements.R")
-load("data/41_NBA-Analysis.RData")
+load("data/43_NBA-Analysis.RData")
 ```
 
 ## Abstract
@@ -269,6 +271,8 @@ $\rho = 0.355,\ p < 2.2 \times 10^{-16}$ \\
 \textbf{Figure 1.14: Winningness of Defensive Rebounds}
 \end{figure}
 
+\newpage
+
 As a result of these strong findings, we can move forward with analysis on logistic regression fits for both offensive and defensive models, and then further check which contributes more to winningness.
 
 \newpage
@@ -327,19 +331,74 @@ stargazer(
   header = FALSE
 )
 ```
+Once more there are no predictors to prune, so we leave the full defensive model as is.
+
+Finally, we can produce a full model $\mathscr F$ such that
+
+$$ \mathscr F = \mathscr O + \mathscr D $$
+
+In similar fashion we produce and regress  $\mathscr F$, yielding the following results.
+
+``` {r, results='asis', echo=FALSE}
+stargazer(
+  full_model,
+  type = "latex",
+  title = "Full Logistic Regression Results",
+  dep.var.labels = "Win Probability",
+  covariate.labels = c("ST", "DRB", "PF", "BLK"),
+  digits = 3,
+  no.space = TRUE,
+  omit.table.note = TRUE,
+  header = FALSE
+)
+```
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\linewidth]{img/plots/corr_heatmap.png}
 \vspace{0.75em}
-\textbf{Figure 1.14: Winningness of Defensive Rebounds}
+\textbf{Figure 2.1: Correlation Heatmap}
 \end{figure}
 
-Develop Composite Model: 
+To verify that there is no colinearity, we can refer to 2.1 and identify hot cells corresponding to metrics in the model.
 
-$$ C = O + M$$
+We only observe a seemingly-strong colinearity between 2PP and ORB, so we verify using a Pearson test.
 
-Nested F-test Analysis
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{img/plots/Two_Pointer_Accuracy_vs_Offensive_Rebounds.png}
+\vspace{0.75em}
+$\rho = -0.31, \text{ } p < 2.2 \times 10^{-16} $
+\textbf{Figure 2.2: Correlation Heatmap}
+\end{figure}
+
+While the p value indicates high significance of colinearity, we must keep in mind that the the sample size is $n = 28446$, and therefore paired with the low $\rho$ value we ignore any such issues.
+
+
+Finally we can execute a nested likelihood-$\chi^2$ test to see which of the smaller model contributes more to the full composite model. Here are the results
+
+```{r nested-table, echo=FALSE, results='asis'}
+cat("
+\\begin{table}[H]
+\\centering
+\\caption{\\textbf{Analysis of Deviance for Nested Logistic Models}}
+\\begin{tabular}{lcccc}
+\\toprule
+Comparison & Model & Residual Df & Residual Dev & Deviance Drop \\\\
+\\midrule
+Defense → Full & Defense Only & 28441 & 33777 & \\\\
+               & Full Model   & 28432 & 21617 & 12160 \\\\
+\\midrule
+Offense → Full & Offense Only & 28436 & 30449 & \\\\
+               & Full Model   & 28432 & 21617 & 8832 \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+")
+```
+
+## Conclusions
+We can conclusively say that the stereotype is more or less right — offense contributes significantly more to winning games. Both defense and offense significantly contribute to a winning game, but that finding is more or less trivial. The difference from the ANOVA tables strongly indicates that offense clearly has the stronger contribution between the two.
 
 ## Conclusion
 
