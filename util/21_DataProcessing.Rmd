@@ -24,7 +24,7 @@ nba_derived <- nba_clean %>%
 ```
 
 ``` {r}
-nba_derived <- nba_clean %>%
+nba_derived <- nba_derived %>%
   mutate(
     `Three Point Volume` = round(`Three Pointers Attempted` / `Field Goals Attempted`, 3)
   )

@@ -12,67 +12,36 @@ source("01_plot_functions.R")
 load("../data/21_NBA-Analysis.RData")
 ```
 
-When checking for colinearity, we will use the typical threshold of 
-$ |\rho|>0.7 $
+``` {r}
+heatmap_corr <- pheatmap(
+  cor(
+    nba_processed %>%
+      select(where(is.numeric)) %>%
+      select(-`Team ID`, -contains("ID")),  # remove indexing columns
+    use = "complete.obs"
+  ),
+  color = colorRampPalette(c("#132B43", "#56B1F7", "#99FFFF"))(200),
+  border_color = NA,
+  cluster_rows = FALSE,
+  cluster_cols = FALSE,
+  fontsize = 10,
+  fontsize_col = 10,
+  fontsize_row = 10,
+  cellheight = 18
+)
 
-Since three pointers and two-point shots are necessarily made during offensive drives, there is concern about colinearity since they occupy the same production space. As a result, we will test for colinearity between the two.
+ggsave("../img/plots/corr_heatmap.png", heatmap_corr, width = 10, height = 10, dpi = 600)
 
-```{r}
-# Checking for colinearity between Three Pointers Made and Two Pointers Made
-plot_corr(nba_processed, "Three Pointers Made", "Two Pointers Made")
+head(nba_processed, 10)
 ```
 
-The plot indicates a very weak linear relation, and $\rho$ fails the threshold test for colinearity. As a result, both variables can contribute to an initial model before backward elimination.
-
-Due to the current NBA rules, personal fouls very frequently enable opponents to shoot free throws. Due to the confoundingness in the production of such metrics, colinearity must be tested.
-
-```{r}
-# Checking for colinearity between Free Throws Attempted and Personal Fouls Drawn
-plot_corr(nba_processed, "Free Throws Attempted", "Personal Fouls Drawn")
+``` {r}
+plot_corr(nba_processed, "Two Pointer Accuracy", "Offensive Rebounds")
+cor.test(
+  nba_processed$`Two Pointer Accuracy`, 
+  nba_processed$`Offensive Rebounds`, 
+  method = "pearson")
 ```
-
-The plot indicates a very strong linear relation, with $\rho = 0.790$ meeting the threshold test for colinearity. Due to this, we must choose only one when constructing the full offensive model.
-
-Similarly, assists necessarily precede a successful two-point attempt, which may be concerning when considering colinearity. Due to this concern, we will conduct a test for colinearity.
-
-```{r}
-# Checking for colinearity between Assists and Two Pointers Made
-plot_corr(nba_processed, "Assists", "Two Pointers Made")
-```
-
-The above plot displays a very weak linear relation, and $\rho = 0.79$ fails the threshold test for colinearity. Consequently, both variables can contribute to the initial offense model prior to backward elimination.
-
-In much similar fashion to the former, assists also necessarily precede successful three-point shots, so we move ahead with colinear analysis.
-
-```{r}
-# Checking for colinearity between Assists and Three Pointers Made
-plot_corr(nba_processed, "Assists", "Three Pointers Made")
-```
-  
-The plot indicates a very weak linear relation, and $\rho = 0.478$ fails the threshold test for colinearity. As a result, both metrics can contribute to an initial model before backward elimination.
-
-Turnovers and assists may possibly be confounding variables, especially due to the new 2024-2025 season rules that have strengthened the transition game and enabled very aggressive counter-offense. As a result, we will move forward with colinear testing. 
-  
-```{r}
-# Checking for colinearity between Assists and Turnover
-plot_corr(nba_processed, "Assists", "Turnover")
-```
-
-The plot once again indicates a very weak linear relation, and $\rho = -0.053$ fails the threshold test for colinearity. As a result, both variables can be included in the offensive model before backward elimination.
-
-In regards to defensive concerns, personal fouls are incurred during illegal physical contact with an offensive player. As a result, we must test both blocks and steals against personal fouls because both necessarily put the defensive player at risk of an illegal maneuver that constitutes the latter. 
-
-```{r}
-# Checking for colinearity between Free Throws Attempted and Personal Fouls
-plot_corr(nba_processed, "Blocks", "Personal Fouls")
-```
-
-```{r}
-# Checking for colinearity between Free Throws Attempted and Personal Fouls
-plot_corr(nba_processed, "Steals", "Personal Fouls")
-```
-
-Both metrics have extremely low correlation magnitudes, and as a result, all three of these variables will be included in the full defensive model prior to pruning.
 
 ``` {r}
 # Putting heatmap construction in local so as not 
@@ -85,17 +54,183 @@ local({
     cluster_cols = FALSE,
     fontsize = 10,
     fontsize_col = 10,
-    fontsize_row = 10
+    fontsize_row = 10,
+    cellheight = 18
   )
+  # 
+  # s <- ggplot(nba_processed, aes(`Steals`, `Personal Fouls`)) +
+  # geom_point(alpha = 0.6) +
+  # stat_ellipse(type = "norm", level = 0.95) +
+  # theme_minimal()
+  # 
+  # print(s)
   
-  ggsave("../img/plots/corr_heatmap.png", heatmap_corr, width = 8, height = 8, dpi = 600)
+  # ggsave("../img/plots/corr_heatmap.png", heatmap_corr, width = 8, height = 8, dpi = 600)
+
+  # ggplot(nba_processed %>%
+  #        group_by(`Season`) %>%
+  #        summarize(mean_pf = mean(`Personal Fouls`)),
+  #        aes(`Season`, mean_pf, group = 1)) +
+  #   geom_line(linewidth = 1.4, color = "#1F78B4") +
+  #   geom_point(size = 3, color = "#1F78B4") +
+  #   # labs(
+  #   #   title = "Personal Fouls by Season",
+  #   #   x = "Season",
+  #   #   y = "Personal Fouls"
+  #   # ) +
+  #   theme_minimal(base_size = 14) +
+  #   theme(
+  #     axis.text.x = element_text(angle = 45, hjust = 1),
+  #     plot.title = element_text(face = "bold", size = 18)
+  #   )
+  
+  
+  # metric_col <- "Steals"
+  # metric_sym <- rlang::sym(metric_col)
+  # 
+  # nba_processed %>%
+  #   mutate(metric_bin = cut(!!metric_sym, breaks = 100)) %>%  # bin metric
+  #   group_by(metric_bin) %>%
+  #   summarize(win_rate = mean(`Win/Loss Status` == "W"),
+  #             mid = mean(!!metric_sym)) %>%
+  #   ggplot(aes(x = mid, y = win_rate)) +
+  #   geom_point(size = 3, color = "#1F78B4") +
+  #   scale_y_continuous(breaks = c(0, 1),
+  #                      labels = c("Loss", "Win")) +
+  #   labs(
+  #     title = paste(metric_col, "vs Winningness"),
+  #     x = metric_col,
+  #     y = "Empirical Win Rate (Raw)"
+  #   ) +
+  #   theme_minimal(base_size = 14)
+  
+  # bin_mid = (as.numeric(sub("\\((.+),.*", "\\1", metric_bin)) +
+  #                as.numeric(sub(".*,(.+)\\]", "\\1", metric_bin))) / 2
+  
+  # metric_col <- "Three Pointer Accuracy"
+  # metric_sym <- rlang::sym(metric_col)
+  # 
+  # nba_processed %>%
+  #   mutate(metric_bin = cut(!!metric_sym, breaks = 100)) %>%        # 20 bins
+  #   group_by(metric_bin) %>%
+  #   summarize(
+  #     win_rate = mean(`Win/Loss Status` == "W"),                             # TRUE raw proportion
+  #     bin_mid = (as.numeric(sub("\\((.+),.*", "\\1", metric_bin)) +
+  #                as.numeric(sub(".*,(.+)\\]", "\\1", metric_bin))) / 2
+  #   ) %>%                                                          # proper midpoint from breaks
+  #   ggplot(aes(x = bin_mid, y = win_rate)) +
+  #   geom_point(size = 3, color = "#1F78B4") +
+  #   scale_y_continuous(
+  #     breaks = c(0,1),
+  #     labels = c("Loss", "Win")
+  #   ) +
+  #   labs(
+  #     title = paste(metric_col, "vs Winningness"),
+  #     x = metric_col,
+  #     y = "Empirical Win Rate"
+  #   ) +
+  #   theme_minimal(base_size = 14)
+  
+  # winningness_of("Steals")
+  
+
+  
+  # timeseriesgraph("Personal Fouls")
+
+  # ggplot(season_summary, aes(x = Season, y = avg_3pa, group = 1)) +
+  #   geom_line(linewidth = 1.4, color = "#1F78B4") +
+  #   geom_point(size = 3.2, color = "#1F78B4") +
+  #   labs(
+  #     title = "Average Three Pointers Attempted by Season",
+  #     x = "Season",
+  #     y = "Average 3PA"
+  #   ) +
+  #   theme_minimal(base_size = 14) +
+  #   theme(
+  #     axis.text.x = element_text(angle = 45, hjust = 1),
+  #     plot.title = element_text(face = "bold", size = 18),
+  #     panel.grid.minor = element_blank()
+  #   )
 })
 ```
 
-```{r}
-# Checking for colinearity between Three Pointers Attempted and Two Pointer Attempts
-plot_corr(nba_processed, "Three Pointers Attempted", "Two Pointer Attempts")
+``` {r}
+winningness_prop("Three Pointer Accuracy")
+cor.test(
+  nba_processed$`Three Pointer Accuracy`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
 ```
+
+``` {r}
+winningness_prop("Two Pointer Accuracy")
+cor.test(
+  nba_processed$`Three Pointer Accuracy`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+winningness_prop("Three Point Volume")
+cor.test(
+  nba_processed$`Three Pointer Accuracy`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+winningness_of("Three Pointers Attempted")
+cor.test(
+  nba_processed$`Three Pointer Accuracy`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+winningness_of("Steals")
+cor.test(
+  nba_processed$`Three Pointer Accuracy`, 
+  as.numeric(nba_processed$`Win/Loss Status` == "W"), 
+  method = "spearman")
+```
+
+``` {r}
+timeseriesgraph("Three Point Volume")
+```
+
+``` {r}
+timeseriesgraph("Defensive Rebounds")
+```
+
+``` {r}
+timeseriesgraph("Offensive Rebounds")
+```
+
+``` {r}
+timeseriesgraph("Turnover")
+```
+
+``` {r}
+timeseriesgraph("Steals")
+```
+
+``` {r}
+timeseriesgraph("Free Throws Attempted")
+```
+
+``` {r}
+timeseriesgraph("Free Throw Accuracy")
+```
+
+``` {r}
+timeseriesgraph("Personal Fouls")
+```
+
+``` {r}
+timeseriesgraph("Three Pointer Accuracy")
+```
+
+
 
 ```{r, echo=FALSE}
 save.image("../data/31_NBA-Analysis.RData")
