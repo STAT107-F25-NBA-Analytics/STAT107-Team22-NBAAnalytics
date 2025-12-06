@@ -60,14 +60,17 @@
 ### PRs: 1
 
 ## Arsenii Vasilev
-
+### Primary Contributions
+ - Developed offensive model with backtrack elimination
+ - Developed defensive model with bactrack elimination
 ### Primary Contributions in Progress
-- Defensive Model Production
-- Offensive Model Production
+- Testing models for any violations
+- Running f-tests on defensive, offensive anf etc. models.
+- finishing analysis and writing analysis for the project.
 
-### LOC Added: 113
-### LOC Changed: 113
-### LOC Net: 113
-### Total Commits: 2
+### LOC Added: 235
+### LOC Changed: 235
+### LOC Net: 235
+### Total Commits: 16
 ### Issues Worked On: 6
-### PRs: 1
+### PRs: 2
