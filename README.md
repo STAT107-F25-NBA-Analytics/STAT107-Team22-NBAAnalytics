@@ -29,4 +29,5 @@ To do so, we will be pulling from these two public data sets
 14. [util/31_DataVisualization.Rmd](util/31_DataVisualization.Rmd) - Data Visualization File
 15. [analysis/offensive_model.Rmd](analysis/offensive_model.Rmd) - Rmd file for full offensive model with backtrack elimination.
 16. [analysis/defensive_model.Rmd](analysis/defensive_model.Rmd) - Rmd file for full defensive model with backtrack elimination.
+17. [analysis/composite_model.Rmd](analysis/defensive_model.Rmd) - Rmd file for composite model.
 
