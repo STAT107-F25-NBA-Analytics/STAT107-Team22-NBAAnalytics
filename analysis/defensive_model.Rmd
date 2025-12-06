@@ -78,6 +78,38 @@ for (col in c("Defensive.Rebounds", "Steals", "Blocks",
 vif(full_defensive_model)
 resettest(full_defensive_model)
 ```
+```{r}
+# Adding win variable
+defense_data <- df_joined %>%
+  mutate(Win = ifelse(Win.Loss.Status == "W", 1, 0)) %>%
+  select(
+    Win,
+    DefensiveEfficiency,
+    Defensive.Rebounds,
+    Steals,
+    Blocks,
+    Blocks.Against,
+    Personal.Fouls,
+    Turnover,
+    Total.Rebounds
+  )
+
+# Changing model to win regression model
+defense_win_model <- glm(
+  Win ~ Defensive.Rebounds + Steals + Blocks +
+         Blocks.Against + Personal.Fouls + Turnover + Total.Rebounds,
+  data = defense_data,
+  family = binomial
+)
+
+summary(defense_win_model)
+defense_data$PredictedWinProb <- predict(defense_win_model, type = "response")
+plot(defense_data$DefensiveEfficiency, defense_data$PredictedWinProb,
+     xlab = "Defensive Efficiency (Opponent Points per Possession)",
+     ylab = "Win Probability",
+     main = "Win Probability vs Defensive Efficiency")
+abline(h = 0.5, col = "red", lty = 2) 
+```
 
 
 ```{r}
